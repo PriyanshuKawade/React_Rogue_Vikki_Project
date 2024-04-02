@@ -23,6 +23,7 @@ const ReactRogue = ({width,height,titlesize}) =>{
       newWorld.moveToSpace(world.player);
       let spawner=new Spawner(newWorld);
       spawner.spawnLoot(10);
+      spawner.spawnMonster(6);
       setWorld(newWorld);
    },[]);
 
@@ -42,6 +43,14 @@ ctx.clearRect(0,0,width*titlesize,height*titlesize);
 world.draw(ctx);
 
    }) 
- return   (<canvas ref={canvasRef} width={width * titlesize} height={height * titlesize} style={{border: '1px solid black' }} ></canvas>);
+ return   (<>  <canvas ref={canvasRef} width={width * titlesize} height={height * titlesize} style={{border: '1px solid black',background:'DimGray' }} ></canvas>
+ <ul>
+   {world.player.inventory.map((item,index)=>(<li key={index}>{item.attribute.name}</li>))}
+ </ul>
+ <ul>
+   {world.history.map((item,index)=>(<li key={index}>{item}</li>))}
+ </ul>
+ </>
+ )
 }
 export default ReactRogue;

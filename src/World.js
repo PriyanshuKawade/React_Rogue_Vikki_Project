@@ -6,6 +6,7 @@ class World{
         this.height=height;
         this.titlesize=titlesize;
         this.entities=[new Player(0,0,16)];
+        this.history=['You enter Dungeon','---'];
         this.worldmap=new Array(this.width);
         for(let x=0;x<this.width;x++)
         {
@@ -21,13 +22,16 @@ class World{
     add(entity){
         this.entities.push(entity);
     }
+remove(entity){
+this.entities=this.entities.filter(e=>e!==entity);
 
+}
     moveToSpace(entity){
         for(let x=entity.x;x<this.width;x++)
         {
             for(let y=entity.y;y<this.height;y++)
             {
-                if(this.worldmap[x][y]===0)
+                if(this.worldmap[x][y]===0 && !this.getEntityAtLocation(x,y))
                 {
                     entity.x=x;
                     entity.y=y;
@@ -40,11 +44,22 @@ class World{
 isWall(x,y){
     return(this.worldmap[x]===undefined || this.worldmap[y]===undefined || this.worldmap[x][y]===1);
 }
+getEntityAtLocation(x,y){
+    return this.entities.find(entity=> entity.x===x && entity.y===y);
+}
 
     movePlayer(dx,dy)
     {
         let temPlayer=this.player.copyPlayer();
         temPlayer.move(dx,dy);
+
+        let entity = this.getEntityAtLocation(temPlayer.x,temPlayer.y);
+        if(entity){
+            console.log(entity);
+            entity.action('bump',this);
+            return;
+        }
+
         if(this.isWall(temPlayer.x,temPlayer.y)){
             console.log(`Way blocked at ${temPlayer.x}:${temPlayer.y}!`);
         }else{
@@ -79,6 +94,10 @@ isWall(x,y){
     {
         context.fillStyle='#000';
         context.fillRect(x * this.titlesize,y*this.titlesize,this.titlesize,this.titlesize);
+    }
+    addToHistory(history){
+this.history.push(history);
+if(this.history.length>6) this.history.shift();
     }
 }
 export default World;
